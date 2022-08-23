@@ -9,10 +9,15 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "epubjs": "^0.3.93",
     "expo": "~46.0.9",
     "expo-status-bar": "~1.4.0",
+    "fast-html-parser": "^1.0.1",
+    "jszip": "^3.10.1",
     "react": "18.0.0",
-    "react-native": "0.69.4"
+    "react-native": "0.69.4",
+    "react-native-html-parser": "^0.1.0",
+    "react-native-url-polyfill": "^1.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

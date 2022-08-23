@@ -9,38 +9,48 @@ import {
 } from "react-native";
 import * as FileSystem from "expo-file-system";
 import { useState } from "react";
+import {DOMParser} from "react-native-html-parser";
 
 export default function App() {
   const [sentences, setSentences] = useState(0);
   const [currPage, setCurrPage] = useState(0);
 
   const osaat = async () => {
-    let book_uri = FileSystem.documentDirectory + "sherlock.txt";
+    let book_uri = FileSystem.documentDirectory + "sherlock3.txt";
 
-    if (!(await FileSystem.getInfoAsync(book_uri)).exists) {
+     if (!(await FileSystem.getInfoAsync(book_uri)).exists) {
       await FileSystem.downloadAsync(
-        "https://www.gutenberg.org/files/1661/1661-0.txt",
+        "https://pastebin.com/raw/Lup6yYqS",
         book_uri
       );
-    }
+     }
 
     const book = await FileSystem.readAsStringAsync(book_uri);
+    const parsed = new DOMParser().parseFromString(book);
+    
+    let p_arr = parsed.querySelect('p');
+    
+    let paragraphs = p_arr.map((e) => {
+        return e.textContent + '¶';
+    });
 
-    // console.log(book);
+    let sentences = [];
+    paragraphs.forEach( (e) => {
+        e.split('.').forEach((f) => {
+            sentences.push(f + '.');
+        })
+      });
 
-    const sentences = book
-      .replace(/\r\n/gi, "¶")
-      .replace(/\.{3}/gi, "…")
-      .match(/[^\.\?!\:]+[\.\?!\:]\"?¶?/g);
+    //console.log(sentences);
 
     setSentences(sentences);
 
-    let save2_uri = FileSystem.documentDirectory + "save3.txt";
-    // if (!(await FileSystem.getInfoAsync(save2_uri)).exists) {
-    FileSystem.writeAsStringAsync(save2_uri, "0");
-    // }
+    let save5_uri = FileSystem.documentDirectory + "save5.txt";
+    if (!(await FileSystem.getInfoAsync(save5_uri)).exists) {
+      FileSystem.writeAsStringAsync(save5_uri, "0");
+    }
 
-    setCurrPage(await FileSystem.readAsStringAsync(save2_uri));
+     setCurrPage(await FileSystem.readAsStringAsync(save5_uri));
   };
 
   const handlePress = async (summand) => {

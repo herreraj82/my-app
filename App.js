@@ -45,19 +45,18 @@ export default function App() {
     //console.log(sentences);
 
     let file = await DocumentPicker.getDocumentAsync();
-    let fileString = await FileSystem.readAsStringAsync(file.uri);
-    let formFile = new FormData();
-    formFile.append(file.name, fileString);
-    console.log(formFile);
-    let response = await fetch(
-      'http://192.168.0.154:5000', {
-      method: 'POST',
-      body: formFile
-    });
+    console.log(file.uri);
+    let response = await FileSystem.uploadAsync(
+      'http://192.168.0.154:5000',
+      file.uri,
+      {
+        httpMethod: 'POST',
+        uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+        fieldName: 'uploadedFile'
+      }
+    );
 
-    console.log(response);
-
-    setSentences(sentences);
+    setSentences(JSON.parse(response.body));
 
     let save5_uri = FileSystem.documentDirectory + "save5.txt";
     if (!(await FileSystem.getInfoAsync(save5_uri)).exists) {

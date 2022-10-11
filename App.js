@@ -9,39 +9,53 @@ import {
 } from "react-native";
 import * as FileSystem from "expo-file-system";
 import { useState } from "react";
-import {DOMParser} from "react-native-html-parser";
+import * as DocumentPicker from 'expo-document-picker';
+import { files } from "jszip";
 
 export default function App() {
   const [sentences, setSentences] = useState(0);
   const [currPage, setCurrPage] = useState(0);
 
   const osaat = async () => {
-    let book_uri = FileSystem.documentDirectory + "sherlock3.txt";
+    // let book_uri = FileSystem.documentDirectory + "sherlock3.txt";
 
-     if (!(await FileSystem.getInfoAsync(book_uri)).exists) {
-      await FileSystem.downloadAsync(
-        "https://pastebin.com/raw/Lup6yYqS",
-        book_uri
-      );
-     }
+    //  if (!(await FileSystem.getInfoAsync(book_uri)).exists) {
+    //   await FileSystem.downloadAsync(
+    //     "https://pastebin.com/raw/Lup6yYqS",
+    //     book_uri
+    //   );
+    //  }
 
-    const book = await FileSystem.readAsStringAsync(book_uri);
-    const parsed = new DOMParser().parseFromString(book);
+    // const book = await FileSystem.readAsStringAsync(book_uri);
+    // const parsed = new DOMParser().parseFromString(book);
     
-    let p_arr = parsed.querySelect('p');
+    // let p_arr = parsed.querySelect('p');
     
-    let paragraphs = p_arr.map((e) => {
-        return e.textContent + '¶';
-    });
+    // let paragraphs = p_arr.map((e) => {
+    //     return e.textContent + '¶';
+    // });
 
-    let sentences = [];
-    paragraphs.forEach( (e) => {
-        e.split('.').forEach((f) => {
-            sentences.push(f + '.');
-        })
-      });
+    // let sentences = [];
+    // paragraphs.forEach( (e) => {
+    //     e.split('.').forEach((f) => {
+    //         sentences.push(f + '.');
+    //     })
+    //   });
 
     //console.log(sentences);
+
+    let file = await DocumentPicker.getDocumentAsync();
+    let fileString = await FileSystem.readAsStringAsync(file.uri);
+    let formFile = new FormData();
+    formFile.append(file.name, fileString);
+    console.log(formFile);
+    let response = await fetch(
+      'http://192.168.0.154:5000', {
+      method: 'POST',
+      body: formFile
+    });
+
+    console.log(response);
 
     setSentences(sentences);
 

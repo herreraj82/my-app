@@ -6,10 +6,12 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   Dimensions,
-} from "react-native";
-import * as FileSystem from "expo-file-system";
-import { useState } from "react";
+}                          from "react-native";
+import { useState }        from "react";
+import * as FileSystem     from "expo-file-system";
 import * as DocumentPicker from 'expo-document-picker';
+import MainScreen from "./mainscreen";
+import ContentPane from "./contentpane";
 
 export default function App() {
   const [sentences, setSentences] = useState(0);
@@ -17,18 +19,23 @@ export default function App() {
 
   async function osaat() {
     const file     = await DocumentPicker.getDocumentAsync();
-    
     const response = await FileSystem.uploadAsync(
       'http://192.168.0.154:5000',
       file.uri,
       {
         httpMethod: 'POST',
         uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-        fieldName: 'uploadedFile'
+        fieldName:  'uploadedFile'
       }
     );
-
     setSentences(JSON.parse(response.body));
+    let save_uri = FileSystem.documentDirectory + "save.txt";
+
+    if (!(await FileSystem.getInfoAsync(save_uri)).exists) {
+      FileSystem.writeAsStringAsync(save_uri, "0");
+    }
+
+    setCurrPage(await FileSystem.readAsStringAsync(save_uri));
   };
 
   async function handlePress(summand) {
@@ -36,8 +43,11 @@ export default function App() {
       Math.max(Number(currPage) + summand, 0),
       sentences.length
     );
-
     setCurrPage(newPage);
+    await FileSystem.writeAsStringAsync(
+      FileSystem.documentDirectory + "save.txt",
+      newPage.toString()
+    );
   };
 
   return (
@@ -49,76 +59,8 @@ export default function App() {
         backgroundColor: "black",
       }}
     >
-      {sentences.length > 0 && (
-        <TouchableWithoutFeedback
-          onPress={(e) =>
-            handlePress(
-              e.nativeEvent.locationX / Dimensions.get("window").width < 1 / 2
-                ? -1
-                : 1
-            )
-          }
-          touchSoundDisabled={true}
-        >
-          <View
-            style={{
-              flex: 1,
-              width: "100%",
-              justifyContent: "center",
-              alignItems: "center",
-              paddingTop: StatusBar.currentHeight,
-            }}
-          >
-            <Text
-              style={{
-                color: "cornsilk",
-                fontSize: 28,
-                textAlign: "center",
-              }}
-            >
-              {sentences[currPage].replace("¶", "")}
-            </Text>
-            {sentences[currPage].includes("¶") && (
-              <Text
-                style={{
-                  color: "cornsilk",
-                  fontSize: 33,
-                  top: 50,
-                }}
-              >
-                ¶
-              </Text>
-            )}
-          </View>
-        </TouchableWithoutFeedback>
-      )}
-
-      <View style={{ width: "100%" }}>
-        {!sentences && <Button title="Convert Ebook" onPress={osaat} />}
-
-        {sentences.length > 0 && (
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              paddingBottom: 50,
-            }}
-          >
-            <Button title="<--" onPress={() => handlePress(-1)} />
-            <TextInput
-              style={{ color: "white" }}
-              placeholder={currPage.toString()}
-              placeholderTextColor="white"
-              keyboardType="number-pad"
-              onSubmitEditing={(e) => setCurrPage(e.nativeEvent.text)}
-            />
-            <Text style={{ color: "white" }}>/</Text>
-            <Text style={{ color: "white" }}>{sentences.length}</Text>
-            <Button title="-->" onPress={() => handlePress(1)} />
-          </View>
-        )}
-      </View>
+      {sentences.length > 0 && (<ContentPane handlePress={handlePress} sentences={sentences} currPage={currPage}/>)}
+      <MainScreen sentences={sentences} osaat={osaat} handlePress={handlePress} currPage={currPage} setCurrPage={setCurrPage}/>
     </View>
   );
 }

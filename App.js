@@ -13,12 +13,12 @@ import * as DocumentPicker from 'expo-document-picker';
 
 export default function App() {
   const [sentences, setSentences] = useState(0);
-  const [currPage, setCurrPage] = useState(0);
+  const [currPage,  setCurrPage]  = useState(0);
 
-  const osaat = async () => {
-    let file = await DocumentPicker.getDocumentAsync();
-    console.log(file.uri);
-    let response = await FileSystem.uploadAsync(
+  async function osaat() {
+    const file     = await DocumentPicker.getDocumentAsync();
+    
+    const response = await FileSystem.uploadAsync(
       'http://192.168.0.154:5000',
       file.uri,
       {
@@ -31,7 +31,7 @@ export default function App() {
     setSentences(JSON.parse(response.body));
   };
 
-  const handlePress = async (summand) => {
+  async function handlePress(summand) {
     const newPage = Math.min(
       Math.max(Number(currPage) + summand, 0),
       sentences.length

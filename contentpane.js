@@ -10,7 +10,6 @@ import {
 import TextPane from "./textpane";
 
 export default function ContentPane(props) {
-    console.log(props.sentences[props.currPage])
     return (
         <TouchableWithoutFeedback 
             style={{width:"100%"}}

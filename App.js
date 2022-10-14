@@ -59,7 +59,6 @@ export default function App() {
         backgroundColor: "black",
       }}
     >
-      {sentences.length > 0 && (<ContentPane handlePress={handlePress} sentences={sentences} currPage={currPage}/>)}
       <MainScreen sentences={sentences} osaat={osaat} handlePress={handlePress} currPage={currPage} setCurrPage={setCurrPage}/>
     </View>
   );

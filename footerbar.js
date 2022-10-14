@@ -6,6 +6,7 @@ import {
     TouchableWithoutFeedback,
     TextInput,
     Dimensions,
+    Platform,
   }                          from "react-native";
 
 export default function FooterBar(props) {
@@ -23,7 +24,7 @@ export default function FooterBar(props) {
                 style={{ color: "white" }}
                 placeholder={props.currPage.toString()}
                 placeholderTextColor="white"
-                keyboardType="number-pad"
+                keyboardType={Platform.OS === 'android' ? "number-pad" : 'numbers-and-punctuation'}
                 onSubmitEditing={(e) => props.setCurrPage(e.nativeEvent.text)}
                 />
                 <Text style={{ color: "white" }}>/</Text>

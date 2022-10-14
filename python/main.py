@@ -13,9 +13,9 @@ def convert_epub(epub_name):
         content = BeautifulSoup(doc.get_content(),'html.parser')
         if(content.h2): res_arr.append(content.h2.get_text())
         for p in content.find_all('p'):
-            for sentence in re.findall("[^\.\?!]+[\.\?!][\"\”]?",p.get_text().replace('\n','').replace('/t','').replace('  ', ' ').replace('Mr.','Mr').replace('Mrs.','Mrs')):
+            for sentence in re.findall("[^\.\?!\:]+[\.\?!\:][\"\”]?",re.sub("\s{2,}"," ",re.sub("\,\s*$",":",p.get_text().replace('\n',' ').replace('/t','').replace('Mr.','Mr').replace('Mrs.','Mrs').replace('St.','St')))):
                 res_arr.append(sentence)
-
+            res_arr[-1] = res_arr[-1] + '¶'
 
     json_string = json.dumps(res_arr)
 

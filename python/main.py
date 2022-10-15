@@ -6,6 +6,7 @@ import json
 
 def convert_epub(epub_name):
     book = epub.read_epub(epub_name)
+    print(book.get_metadata('DC','title')[0][0])
     html_arr = book.get_items_of_type(ebooklib.ITEM_DOCUMENT)
     res_arr = []
 
@@ -17,6 +18,5 @@ def convert_epub(epub_name):
                 res_arr.append(sentence)
             res_arr[-1] = res_arr[-1] + '¶'
 
-    json_string = json.dumps(res_arr)
-
+    json_string = json.dumps({"title":book.get_metadata('DC','title')[0][0],"sentences":res_arr,"identifier":book.get_metadata('DC', 'identifier')[0][0]})
     return json_string

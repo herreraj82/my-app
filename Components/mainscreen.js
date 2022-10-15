@@ -9,11 +9,16 @@ import {
   }                          from "react-native";
   import FooterBar from "./footerbar";
   import ContentPane from "./contentpane";
+  import StartButtons from "./startbuttons";
 
   export default function MainScreen(props) {
     return(
-        <View style={{ width: "100%" ,flex:1}}>
-            {!props.sentences && <Button title="Convert Ebook" onPress={props.osaat} />}
+        <View style={{ width: "100%" ,flex:1,
+        flexDirection: "column",
+        justifyContent: "center",
+        alignContent: "center",
+        }}>
+            {!props.sentences &&  <StartButtons osaat={props.osaat} fileTable={props.fileTable} openConvertedBook={props.openConvertedBook}/>}
 
             {props.sentences.length > 0 && (<ContentPane handlePress={props.handlePress} sentences={props.sentences} currPage={props.currPage}/>)}
 

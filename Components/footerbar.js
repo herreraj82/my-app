@@ -16,7 +16,7 @@ export default function FooterBar(props) {
                 flexDirection: "row",
                 justifyContent: "space-between",
                 alignItems: "center",
-                paddingBottom: 50,
+                paddingBottom: (Platform.OS === 'android' ? StatusBar.currentHeight : 0) + 20,
                 }}
         >
                 <Button title="<--" onPress={() => props.handlePress(-1)} />
@@ -25,7 +25,7 @@ export default function FooterBar(props) {
                 placeholder={props.currPage.toString()}
                 placeholderTextColor="white"
                 keyboardType={Platform.OS === 'android' ? "number-pad" : 'numbers-and-punctuation'}
-                onSubmitEditing={(e) => props.setCurrPage(e.nativeEvent.text)}
+                onSubmitEditing={(e) => props.handlePress(e.nativeEvent.text - props.currPage)} 
                 />
                 <Text style={{ color: "white" }}>/</Text>
                 <Text style={{ color: "white" }}>{props.sentences.length}</Text>
